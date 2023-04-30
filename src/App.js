@@ -25,7 +25,7 @@ function App() {
           <UploadFile handelImageName={handelImageName}/>
         </Grid>
         <Grid>
-          
+          <GetResult imageName={imageName}/>
         </Grid>
       </Container>
     </div>

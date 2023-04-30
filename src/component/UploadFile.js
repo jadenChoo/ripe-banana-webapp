@@ -5,65 +5,47 @@ import axios from 'axios';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
-const { REACT_APP_AWS_URL, REACT_APP_AWS_TOKEN } = process.env;
+const { REACT_APP_AWS_URL, REACT_APP_AWS_TOKEN, REACT_APP_AWS_S3_URL, REACT_APP_AWS_S3_BUCKET } = process.env;
 
 const UploadAndDisplayImage = (props) => {
 
-  const { AWS_URL, AWS_TOKEN } = process.env;
   const [selectedImage, setSelectedImage] = useState(null);
+  const [awsImage, setAwsImage] = useState(null);
 
-  function handleSubmit(e){
-    e.preventDefault();
+  function makeImageName(event){
+    console.log(event.target.files[0]);// FIXME: remove this
+    setSelectedImage(event.target.files[0]);
 
     // make image name
     var today = new Date();
     var name = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate() 
     + "_" + today.getHours() + '-' + today.getMinutes() + '-' + today.getSeconds()
-    + "-" + today.getMilliseconds() + "_" + selectedImage.name;
+    + "-" + today.getMilliseconds() + "_" + event.target.files[0].name;
+    console.log(name); // FIXME: remove this
+    setAwsImage(name);
+  }
 
-    // alert(name);
-    props.handelImageName(name);
+  function handleSubmit(e){
+    e.preventDefault();
 
-    // send file
-    const formData = new FormData();
-    formData.append('files',selectedImage);
+    alert(awsImage);
+    props.handelImageName(awsImage);
 
-    alert(REACT_APP_AWS_URL + 'uploadfile'+'?imagename='+name);
-
-    const response = axios( {
-        method: 'post',
-        url: REACT_APP_AWS_URL + '/uploadfile'+'?imagename='+name,
-        data: formData,
-        headers: { 
-            'Content-Type': 'multipart/form-data',
-            'x-api-key': REACT_APP_AWS_TOKEN,
-        },
-    });
-
-    console.log(response);
+    // send file // TODO
+    // const formData = new FormData();
+    // formData.append('file',selectedImage);
 
     // const response = axios( {
-    //     method: 'post',
-    //     url: REACT_APP_AWS_URL + '/uploadfile'+'?imagename='+name,
+    //     method: 'put',
+    //     url: REACT_APP_AWS_S3_URL + "/" + REACT_APP_AWS_S3_BUCKET + "/" + awsImage,
+    //     data: selectedImage,
     //     headers: { 
-    //         'Content-Type': 'application/json',
+    //         'Content-Type': 'multipart/form-data',
     //         'x-api-key': REACT_APP_AWS_TOKEN,
     //     },
     // });
 
-    // // 👇 Uploading the file using the fetch API to the server
-    // fetch(REACT_APP_AWS_URL + 'uploadfile'+'?imagename='+name, {
-    //   method: 'POST',
-    //   body: selectedImage,
-    //   // 👇 Set headers manually for single file upload
-    //   headers: {
-    //     'content-type': selectedImage.type,
-    //     'content-length': `${selectedImage.size}`, // 👈 Headers need to be a string
-    //   },
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => console.log(data))
-    //   .catch((err) => console.error(err));
+    // console.log(response); // FIXME: remove this
   }
 
   return (
@@ -71,10 +53,7 @@ const UploadAndDisplayImage = (props) => {
         <input
         type="file"
         name="myImage"
-        onChange={(event) => {
-          console.log(event.target.files[0]);
-          setSelectedImage(event.target.files[0]);
-        }}
+        onChange={makeImageName}
       />
       <br />
       <br />
