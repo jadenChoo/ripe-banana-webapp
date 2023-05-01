@@ -1,6 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { createProxyMiddleware } = require('http-proxy-middleware');
-// TODO : env 파일을 둬서 env에 따라 target API 변경
 const getS3Url = () => {
 	return (
 		 process.env.REACT_APP_AWS_S3_URL

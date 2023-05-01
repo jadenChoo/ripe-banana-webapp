@@ -43,7 +43,7 @@ const GetResult = (props) => {
         const res = await axios( {
             method: 'post',
             url: REACT_APP_AWS_URL + '/'+ "modelResult2",
-            data: { "image_name": props.imageName }, // FIXME: imageName
+            data: { "image_name": props.imageName },
             headers: { 
                 'Content-Type': 'application/json',
                 'x-api-key': REACT_APP_AWS_TOKEN,
@@ -68,19 +68,19 @@ const GetResult = (props) => {
         console.log(res.status);
         if(res.status === 200){
             setFinalResponse(true);
-            // cleanLocalData();
-            // props.cleanup();
+            cleanLocalData();
+            props.cleanup();
         }
       };
 
     useEffect(() => {
-        console.log(props.uploadImageYn);
-        console.log(props.imageName);
-        // send file // TODO
+        // console.log(props.uploadImageYn);
+        // console.log(props.imageName);
+        // send file
         setImageName(props.imageName);
         if (props.uploadImageYn === true) {
             getResult();
-            console.log(modelResponse); // FIXME: remove this
+            // console.log(modelResponse); // FIXME: remove this
         }
         // console.log("dddd");
        
@@ -88,13 +88,13 @@ const GetResult = (props) => {
     }, [props.uploadImageYn]);
 
     useEffect(() => {
-        console.log(modelResponse);
+        // console.log(modelResponse);
         if(modelResponse !== null){
             const jsonStr = JSON.stringify(modelResponse);
-            console.log('jsonStr: '+jsonStr); // FIXME: remove this
+            // console.log('jsonStr: '+jsonStr); // FIXME: remove this
             if (modelResponseStatus === 200) {
                 const jsonObj = JSON.parse(jsonStr);
-                console.log(jsonObj.body);
+                // console.log(jsonObj.body);
                 setModelResult(jsonObj.body);
             }
         }
@@ -103,8 +103,8 @@ const GetResult = (props) => {
     useEffect(() => {
         if(modelResult !== null){
             const data = JSON.parse(modelResult);
-            console.log("data: ");
-            console.log(data.result);
+            // console.log("data: ");
+            // console.log(data.result);
             // setResponseBodyResult(data.result);
             if (data.result === 0) {//(unripe:0, overripe:1, ripe:2)
                 setDisplayResult("아직 익지 않았습니다!");
@@ -132,12 +132,13 @@ const GetResult = (props) => {
     //   }
 
     function makeDataToSend(resultCode, correct, hpno){
+        const parsedData = JSON.parse(modelResult);
         const data = {
-            "img_name": modelResult.image_name,
-            "result": modelResult.result,
-            "stat_unripe": modelResult.stat_unripe,
-            "stat_overripe": modelResult.stat_overripe,
-            "stat_ripe": modelResult.stat_ripe,
+            "img_name": parsedData.image_name,
+            "result": parsedData.result,
+            "stat_unripe": parsedData.stat_unripe,
+            "stat_overripe": parsedData.stat_overripe,
+            "stat_ripe": parsedData.stat_ripe,
             "correct": correct,
             "result_correct": resultCode,
             "hpno": hpno
@@ -156,7 +157,8 @@ const GetResult = (props) => {
         setShowRadio(false);
         alert("초기화됩니다.");
         console.log("success 초기화");
-        makeDataToSend(modelResult.result, 1, hpno);
+        const parsedData = JSON.parse(modelResult);
+        makeDataToSend(parsedData.result, 1, hpno);
     }
 
     function handleErrorClick(e){
@@ -166,10 +168,14 @@ const GetResult = (props) => {
     }
 
     function handleRadio(e){
+        // console.log(e.target.value);
         setResultCorrect(e.target.value);
+    }
+
+    function sendWrongData(){
         alert("초기화됩니다.");
         console.log("failure 초기화");
-        makeDataToSend(e.target.value, 2, hpno);
+        makeDataToSend(resultCorrect, 2, hpno);
     }
 
     return (
@@ -183,6 +189,7 @@ const GetResult = (props) => {
                      아래에 휴대폰 번호 입력 후 "맞습니다" 혹은 
                      <br /> 
                      "틀립니다"를 눌러주시면 추첨을 통해 상품을 드립니다!
+                     <br /> 
                     <Stack spacing = {1} alignItems="center" justifyContent="center" >
                         <TextField
                             id="outlined-basic"
@@ -201,19 +208,24 @@ const GetResult = (props) => {
                                 onClick={handleErrorClick}>
                                     틀립니다</Button>
                         </Stack>
+                        <br/>
                         {showRadio && (
                             <FormControl>
-                            <FormLabel id="demo-row-radio-buttons-group">생각하시는 정답은?</FormLabel>
-                            <RadioGroup
-                                aria-labelledby="demo-row-radio-buttons-group"
-                                name="row-radio-buttons-group"
-                                value={resultCorrect}
-                                onChange={handleRadio}
-                            >
-                                <FormControlLabel value="0" control={<Radio />} label="안 익음" />
-                                <FormControlLabel value="2" control={<Radio />} label="적당히 익음" />
-                                <FormControlLabel value="1" control={<Radio />} label="너무 익음" />
-                            </RadioGroup>
+                                <FormLabel id="demo-row-radio-buttons-group">생각하시는 정답은?</FormLabel>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-row-radio-buttons-group"
+                                    name="row-radio-buttons-group"
+                                    value={resultCorrect}
+                                    onChange={handleRadio}
+                                >
+                                    <FormControlLabel value="0" control={<Radio />} label="안 익음" />
+                                    <FormControlLabel value="2" control={<Radio />} label="적당히 익음" />
+                                    <FormControlLabel value="1" control={<Radio />} label="너무 익음" />
+                                </RadioGroup>
+                                <Button variant="outlined"
+                                    onClick={sendWrongData}>
+                                    오류제보</Button>
                             </FormControl>
                         )}
                     </Stack>

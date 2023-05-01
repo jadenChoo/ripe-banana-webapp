@@ -29,6 +29,10 @@ function App() {
     setUploadImageYn(false);
     setClean(true);
   }
+
+  function handelClean(){
+    setClean(false);
+  }
   
   return (
     <div className="ripeBanana stack-large">
@@ -37,7 +41,8 @@ function App() {
           <h1>Are These bananas ripe?</h1>
         </Grid>
         <Grid>
-          <UploadFile handelImageName={handelImageName} handelUploadYn={handelUploadYn} clean={clean}/>
+          <UploadFile handelImageName={handelImageName} handelUploadYn={handelUploadYn} 
+                      clean={clean} handelClean={handelClean}/>
         </Grid>
         <Grid>
           <GetResult imageName={imageName} uploadImageYn={uploadImageYn} cleanup={cleanup}/>
