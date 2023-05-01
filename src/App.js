@@ -8,24 +8,39 @@ import GetResult from './component/GetResult';
 
 function App() {
   const [imageName, setImageName] = useState(null);
+  const [uploadImageYn, setUploadImageYn] = useState(false);
+  const [clean, setClean] = useState(false);
 
   function handelImageName(name){
     // alert(name);
     // const newName = { id: `todo-${nanoid()}`, name, completed: false };
     setImageName(name);
+    setClean(false);
+  }
+
+  function handelUploadYn(upload){
+    // alert(name);
+    // const newName = { id: `todo-${nanoid()}`, name, completed: false };
+    setUploadImageYn(upload);
+  }
+
+  function cleanup(){
+    setImageName(null);
+    setUploadImageYn(false);
+    setClean(true);
   }
   
   return (
     <div className="ripeBanana stack-large">
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }} sx={{p:3, textAlign:"center"}}>
+      <Container width="75%" sx={{p:3, textAlign:"center"}}>
         <Grid item xs={12} md={4} lg={3} >
           <h1>Are These bananas ripe?</h1>
         </Grid>
         <Grid>
-          <UploadFile handelImageName={handelImageName}/>
+          <UploadFile handelImageName={handelImageName} handelUploadYn={handelUploadYn} clean={clean}/>
         </Grid>
         <Grid>
-          <GetResult imageName={imageName}/>
+          <GetResult imageName={imageName} uploadImageYn={uploadImageYn} cleanup={cleanup}/>
         </Grid>
       </Container>
     </div>

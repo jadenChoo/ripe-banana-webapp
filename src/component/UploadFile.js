@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // import Http from './api';
 import axios from 'axios';
 
@@ -10,11 +10,50 @@ const { REACT_APP_AWS_URL, REACT_APP_AWS_TOKEN, REACT_APP_AWS_S3_URL, REACT_APP_
 const UploadAndDisplayImage = (props) => {
 
   const [selectedImage, setSelectedImage] = useState(null);
+  const [displayImage, setDisplayImage] = useState(null);
   const [awsImage, setAwsImage] = useState(null);
+  // const [response, setResponse] = useState(null);
+
+  function cleanLocalData(){
+    setSelectedImage(null);
+    setDisplayImage(null);
+    setAwsImage(null);
+  }
+
+  useEffect(() => {
+    console.log("uploadFile clean:");
+    if (props.clean) {
+      console.log(props.clean);
+      // cleanLocalData();
+      // props.handelClean(false);
+    }
+    
+    
+  }, [props.clean]);
+
+  const sendImage = async() => {
+    const res = await axios( {
+        method: 'put',
+        url: REACT_APP_AWS_S3_URL + "/" + REACT_APP_AWS_S3_BUCKET + "/" + awsImage,
+        data: selectedImage,
+        headers: { 
+            'Content-Type': 'multipart/form-data',
+            'x-api-key': REACT_APP_AWS_TOKEN,
+        },
+    });
+    // setResponse(res.status);
+    // console.log(res.status);
+    if(res.status === 200){
+      props.handelUploadYn(true);
+    }
+  };
+  
 
   function makeImageName(event){
+
     console.log(event.target.files[0]);// FIXME: remove this
     setSelectedImage(event.target.files[0]);
+    setDisplayImage(event.target.files[0]);
 
     // make image name
     var today = new Date();
@@ -32,20 +71,12 @@ const UploadAndDisplayImage = (props) => {
     props.handelImageName(awsImage);
 
     // send file // TODO
-    // const formData = new FormData();
-    // formData.append('file',selectedImage);
+    const formData = new FormData();
+    formData.append('file',selectedImage);
 
-    // const response = axios( {
-    //     method: 'put',
-    //     url: REACT_APP_AWS_S3_URL + "/" + REACT_APP_AWS_S3_BUCKET + "/" + awsImage,
-    //     data: selectedImage,
-    //     headers: { 
-    //         'Content-Type': 'multipart/form-data',
-    //         'x-api-key': REACT_APP_AWS_TOKEN,
-    //     },
-    // });
+    sendImage();
+    setDisplayImage(null);
 
-    // console.log(response); // FIXME: remove this
   }
 
   return (
@@ -57,7 +88,6 @@ const UploadAndDisplayImage = (props) => {
       />
       <br />
       <br />
-
       {selectedImage && (
         <div>
           <img
@@ -66,9 +96,17 @@ const UploadAndDisplayImage = (props) => {
             src={URL.createObjectURL(selectedImage)}
           />
           <br />
+        </div>
+      )}
+
+      {displayImage && (
+        <div>
           <Stack direction="row" spacing={2} alignItems="center" justifyContent="center" >
             <Button variant="contained"
-                onClick={() => setSelectedImage(null)}>
+                onClick={() => {
+                  setSelectedImage(null)
+                  setDisplayImage(null)}
+                  }>
                     Remove</Button>
             <Button variant="contained"
                 onClick={handleSubmit}>
