@@ -107,6 +107,7 @@ const UploadAndDisplayImage = (props) => {
       {!fileSelected && ( 
         <div>
           <input
+          accept="image/*"
           type="file"
           name="myImage"
           onChange={makeImageName}
