@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -10,7 +9,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 
-const { REACT_APP_AWS_URL, REACT_APP_AWS_TOKEN, REACT_APP_AWS_S3_URL, REACT_APP_AWS_S3_BUCKET } = process.env;
+const { REACT_APP_AWS_URL, REACT_APP_AWS_TOKEN} = process.env;
 
 const GetResult = (props) => {
     const [imageName, setImageName] = useState(props.imageName);
@@ -19,8 +18,8 @@ const GetResult = (props) => {
     const [modelResult, setModelResult] = useState(null);
     const [finalResponse, setFinalResponse] = useState(null);
     const [displayResult, setDisplayResult] = useState(null);
+    const [displayColor, setDisplayColor] = useState(null);
     const [dataToSend, setDataToSend] = useState(null);
-    const TMP_IMAGE_NAME="20230426_testest-ripe.jpeg";
 
     const [hpno, setHpno] = useState('');
     const [showRadio, setShowRadio] = useState('');
@@ -71,6 +70,7 @@ const GetResult = (props) => {
             cleanLocalData();
             props.cleanup();
         }
+        alert("제출해주셔서 감사합니다.\n화면 초기화됩니다.");
       };
 
     useEffect(() => {
@@ -108,10 +108,13 @@ const GetResult = (props) => {
             // setResponseBodyResult(data.result);
             if (data.result === 0) {//(unripe:0, overripe:1, ripe:2)
                 setDisplayResult("아직 익지 않았습니다!");
+                setDisplayColor("#33FF57");
             } else if (data.result === 1) {
                 setDisplayResult("너무 익었습니다!");
+                setDisplayColor("#DBFF33");
             } else {
                 setDisplayResult("딱 먹기좋게 익었습니다!");
+                setDisplayColor("#D1AB58");
             }
         }
     }, [modelResult]);
@@ -120,16 +123,6 @@ const GetResult = (props) => {
         // console.log(e.target.value);
         setHpno(e.target.value);
     }
-    // {
-    //     "img_name": "value1",
-    //     "result": "0",
-    //     "stat_unripe": "0.23141",
-    //     "stat_overripe": "0.23141",
-    //     "stat_ripe": "0.23141",
-    //     "correct": "1",
-    //     "result_correct": "1",
-    //     "hpno": "010-2312-3145"
-    //   }
 
     function makeDataToSend(resultCode, correct, hpno){
         const parsedData = JSON.parse(modelResult);
@@ -155,7 +148,6 @@ const GetResult = (props) => {
     function handleSuccessClick(e){
         e.preventDefault();
         setShowRadio(false);
-        alert("초기화됩니다.");
         console.log("success 초기화");
         const parsedData = JSON.parse(modelResult);
         makeDataToSend(parsedData.result, 1, hpno);
@@ -173,7 +165,6 @@ const GetResult = (props) => {
     }
 
     function sendWrongData(){
-        alert("초기화됩니다.");
         console.log("failure 초기화");
         makeDataToSend(resultCorrect, 2, hpno);
     }
@@ -184,11 +175,14 @@ const GetResult = (props) => {
             {displayResult &&  (
                 <div>
                     <br />
-                    <h4>{displayResult}</h4>
+                    <div style={{ backgroundColor: displayColor}}> {/*TODO */}
+                        <h4>{displayResult}</h4>
+                    </div>
+                    
                     <br />
-                     아래에 휴대폰 번호 입력 후 "맞습니다" 혹은 
+                     아래에 휴대폰 번호 입력 후 결과를 제출해주시면
                      <br /> 
-                     "틀립니다"를 눌러주시면 추첨을 통해 상품을 드립니다!
+                     격주로 추첨을 통해 소정의 상품을 드립니다!
                      <br /> 
                     <Stack spacing = {1} alignItems="center" justifyContent="center" >
                         <TextField

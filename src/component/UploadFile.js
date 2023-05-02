@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 // import Http from './api';
 import axios from 'axios';
 
@@ -9,22 +9,25 @@ const { REACT_APP_AWS_TOKEN, REACT_APP_AWS_S3_URL, REACT_APP_AWS_S3_BUCKET } = p
 
 const UploadAndDisplayImage = (props) => {
 
+  const [fileSelected, setFileSelected] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [displayImage, setDisplayImage] = useState(null);
   const [awsImage, setAwsImage] = useState(null);
   // const [response, setResponse] = useState(null);
 
-  const inputRef = useRef(null);
-
   const resetFileInput = () => {
     // resetting the input value
-    inputRef.current.value = null;
+    // inputRef.current.value = null;
+    setSelectedImage(null);
+    setDisplayImage(null);
+    setFileSelected(false);
   };
 
   function cleanLocalData(){
     setSelectedImage(null);
     setDisplayImage(null);
     setAwsImage(null);
+    setFileSelected(false);
     resetFileInput();
   }
 
@@ -74,6 +77,7 @@ const UploadAndDisplayImage = (props) => {
     // console.log(event.target.files[0]);// FIXME: remove this
     setSelectedImage(image);
     setDisplayImage(image);
+    setFileSelected(true);
 
     // make image name
     var today = new Date();
@@ -95,19 +99,23 @@ const UploadAndDisplayImage = (props) => {
 
     sendImage();
     setDisplayImage(null);
-
+    setFileSelected(true);
   }
 
   return (
     <div>
-        <input
-        ref={inputRef}
-        type="file"
-        name="myImage"
-        onChange={makeImageName}
-      />
-      <br />
-      <br />
+      {!fileSelected && ( 
+        <div>
+          <input
+          type="file"
+          name="myImage"
+          onChange={makeImageName}
+        />
+        <br />
+        <br />
+        </div>
+      )}
+      
       {selectedImage && (
         <div>
           <img
@@ -123,15 +131,11 @@ const UploadAndDisplayImage = (props) => {
         <div>
           <Stack direction="row" spacing={2} alignItems="center" justifyContent="center" >
             <Button variant="contained"
-                onClick={() => {
-                  setSelectedImage(null)
-                  setDisplayImage(null)
-                  resetFileInput()}
-                  }>
-                    Remove</Button>
+                onClick={resetFileInput}>
+                    Select Other</Button>
             <Button variant="contained"
                 onClick={handleSubmit}>
-                    Send</Button>
+                    Show Result</Button>
             </Stack>
         </div>
       )}
