@@ -111,10 +111,10 @@ const GetResult = (props) => {
                 setDisplayColor("#33FF57");
             } else if (data.result === 1) {
                 setDisplayResult("너무 익었습니다!");
-                setDisplayColor("#DBFF33");
+                setDisplayColor("#D1AB58");
             } else {
                 setDisplayResult("딱 먹기좋게 익었습니다!");
-                setDisplayColor("#D1AB58");
+                setDisplayColor("#DBFF33");
             }
         }
     }, [modelResult]);
