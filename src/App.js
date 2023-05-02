@@ -37,10 +37,10 @@ function App() {
   return (
     <div className="ripeBanana stack-large">
       <Container width="75%" sx={{p:3, textAlign:"center"}}>
-        <Grid item xs={12} md={4} lg={3} >
+        <Grid item xs={12} md={4} lg={3} sx={{bgcolor: '#DBFF33'}} >
           <h1>Are These bananas ripe?</h1>
         </Grid>
-        <Grid>
+        <Grid item xs={12} md={4} lg={3}>
           <UploadFile handelImageName={handelImageName} handelUploadYn={handelUploadYn} 
                       clean={clean} handelClean={handelClean}/>
         </Grid>
