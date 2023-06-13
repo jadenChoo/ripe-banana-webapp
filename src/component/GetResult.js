@@ -180,10 +180,10 @@ const GetResult = (props) => {
                     </div>
                     
                     <br />
-                     아래에 휴대폰 번호 입력 후 결과를 제출해주시면
+                     {/* 아래에 휴대폰 번호 입력 후 결과를 제출해주시면
                      <br /> 
                      격주로 추첨을 통해 소정의 상품을 드립니다!
-                     <br /> 
+                     <br />  */}
                     <Stack spacing = {1} alignItems="center" justifyContent="center" >
                         <TextField
                             id="outlined-basic"
